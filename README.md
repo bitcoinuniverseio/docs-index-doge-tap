@@ -29,6 +29,13 @@ Applications should route traffic only when `/ready` returns HTTP 200. During a
 first deployment or source recovery it returns HTTP 503 while durable
 checkpoints continue advancing.
 
+## Release validation
+
+Trusted release checks run on the organisation-managed build fleet. A short
+infrastructure interruption can receive one automatic retry only when no build
+or test step has failed. A real validation failure remains visible and blocks
+release promotion.
+
 ## Security
 
 Explorer data and status endpoints require Bearer authentication. Reader
