@@ -58,6 +58,12 @@ output, ambiguous inscription output, stale reader, malformed source row, or
 source disagreement aborts publication. The previous verified checkpoint is
 not silently relabelled as current.
 
+Long-lived immutable transaction and inscription evidence is collected before
+the checkpoint window. The final complete UTXO inventory and inscription
+custody are then revalidated in bounded batches while the Core tip, Ord tip,
+and reader witness are held stable, keeping publication both practical and
+fail-closed on Dogecoin's short block interval.
+
 This release materializes TAP only. DRC-20 and general Doginals remain visible
 as unavailable until their own complete canonical inventories and operational
 gates exist; TAP readiness never enables them indirectly.
