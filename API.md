@@ -43,6 +43,24 @@ allowlist of legacy read-only TAP operations. It is not a public browser API.
 The route requires TLS, Bearer authentication, an exact source-IP match, and a
 ready canonical index.
 
+## Dogecoin Marketplace API
+
+Marketplace routes use `/marketplace/v1/{protocol}` where `protocol` is
+`tap_doge`, `drc20`, or `doginals`. The unauthenticated readiness route is:
+
+- `GET /marketplace/v1/{protocol}/readiness`
+
+Authenticated routes cover checkpoints, assets and history, listings,
+reservations, purchase preparation, offers, wallet challenges, transaction
+intents, signed-transaction validation, broadcast, settlements, and explicit
+authority synchronization. The machine-readable contract is available at
+`GET /marketplace/v1/openapi.json`.
+
+HTTP 503 from protocol readiness is an intentional safety gate. Clients must
+not expose listing or transaction actions until readiness is HTTP 200. Preparing
+an intent never signs for the user: the wallet reviews and authorizes the exact
+transaction before signed validation and broadcast can proceed.
+
 ## Client behavior
 
 Clients should:
@@ -53,4 +71,6 @@ Clients should:
 4. Treat HTTP 503 as a temporary fail-closed state and retry with backoff.
 5. Display source coverage accurately instead of presenting pending or reorg
    data as available.
+6. Treat marketplace readiness independently from explorer readiness and keep
+   Dogecoin transaction controls disabled while it returns HTTP 503.
 
