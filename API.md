@@ -61,6 +61,22 @@ not expose listing or transaction actions until readiness is HTTP 200. Preparing
 an intent never signs for the user: the wallet reviews and authorizes the exact
 transaction before signed validation and broadcast can proceed.
 
+### Canonical authority checkpoint
+
+When the authority publisher is enabled, trusted marketplace consumers can use:
+
+`GET /v1/marketplace/checkpoint?protocol=tap_doge&network=dogecoin-mainnet`
+
+The request requires the configured per-protocol Bearer token and accepts no
+body or additional query fields. A valid response contains the canonical
+checkpoint, inventory hash, and complete array of transferable assets. The
+route returns HTTP 401 for failed authentication, HTTP 404 when that protocol
+is not published, and HTTP 503 when no currently valid snapshot can be read.
+
+The same process can ingest its locally published checkpoint without a public
+DNS round trip. Local ingestion applies the identical schema and reader-state
+validation; it is not a bypass.
+
 ## Client behavior
 
 Clients should:
