@@ -29,6 +29,21 @@ Applications should route traffic only when `/ready` returns HTTP 200. During a
 first deployment or source recovery it returns HTTP 503 while durable
 checkpoints continue advancing.
 
+## Marketplace readiness
+
+The indexer includes a fail-closed Dogecoin Marketplace integration for TAP on
+Dogecoin, DRC-20, and Doginals. It can normalize authority checkpoints, keep
+marketplace state replay-safe, prepare transaction intents, validate signed
+transactions, and submit a previously authorized transaction to Dogecoin Core.
+
+Marketplace availability is separate from explorer readiness. A protocol is
+offered to users only after its canonical authority, fee policy, Core RPC path,
+and end-to-end canaries all pass. Until then, marketplace readiness returns an
+explicit unavailable result; explorer and journal APIs continue operating.
+
+Signing remains in the user's wallet. The indexer does not hold wallet keys and
+does not silently sign or broadcast transactions.
+
 ## Release validation
 
 Trusted release checks run on the organisation-managed build fleet. A short
