@@ -44,6 +44,24 @@ explicit unavailable result; explorer and journal APIs continue operating.
 Signing remains in the user's wallet. The indexer does not hold wallet keys and
 does not silently sign or broadcast transactions.
 
+### Canonical TAP inventory
+
+The optional TAP authority builder produces a complete transferable-inventory
+checkpoint only when the pinned TAP reader, Dogecoin Core 1.14.9, and the
+official Ord-Dogecoin index agree. Every published asset includes its current
+unspent output, value, locking script, raw previous transaction, owner,
+inscription satpoint, TAP amount, and deterministic authority identity.
+
+The checkpoint is replaced atomically and served only after the same strict
+schema used by marketplace ingestion accepts it. A chain-tip change, spent
+output, ambiguous inscription output, stale reader, malformed source row, or
+source disagreement aborts publication. The previous verified checkpoint is
+not silently relabelled as current.
+
+This release materializes TAP only. DRC-20 and general Doginals remain visible
+as unavailable until their own complete canonical inventories and operational
+gates exist; TAP readiness never enables them indirectly.
+
 ## Release validation
 
 Trusted release checks run on the organisation-managed build fleet. A short
