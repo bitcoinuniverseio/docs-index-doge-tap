@@ -64,9 +64,11 @@ custody are then revalidated in bounded batches while the Core tip, Ord tip,
 and reader witness are held stable, keeping publication both practical and
 fail-closed on Dogecoin's short block interval.
 
-This release materializes TAP only. DRC-20 and general Doginals remain visible
-as unavailable until their own complete canonical inventories and operational
-gates exist; TAP readiness never enables them indirectly.
+TAP, DRC-20, and Doginals each have a dedicated complete canonical inventory
+builder and independent operational gate. DRC-20 and Doginals require a fresh
+full Ord-Dogecoin index with their protocol modules enabled; the legacy plain-
+inscription archive cannot authorize them. Readiness for one protocol never
+enables another indirectly.
 
 ## Release validation
 
@@ -95,4 +97,13 @@ or explicit block-replacement notification stream. Coverage therefore reports
 `partial`: confirmed activity is canonical at the pinned reader version, while
 pending activity is unavailable and reorg handling is based on immutable tail
 comparison evidence.
+
+## Universe-operated Wallet data
+
+The indexer now supplies the Wallet's transaction-critical Dogecoin inputs
+without public data providers. Its private authority returns proof-bound
+confirmed-cardinal wallet summaries and funding plans, excludes protocol assets
+and reservations, and binds every response to live Dogecoin Core and the exact
+Ord-Dogecoin indexed checkpoint. Backend APIs independently revalidates those
+proofs before exposing the bounded public Wallet contract.
 

@@ -90,3 +90,21 @@ Clients should:
 6. Treat marketplace readiness independently from explorer readiness and keep
    Dogecoin transaction controls disabled while it returns HTTP 503.
 
+## Universe wallet proof endpoints
+
+Trusted Universe backends can call two internal POST endpoints through the
+read-bearer, distinct execution-bearer, and request-HMAC boundary:
+
+- `/v1/marketplace/protocols/doginals/internal/wallet` returns the confirmed
+  cardinal spendable balance and up to 50 raw-prevout proofs.
+- `/v1/marketplace/protocols/doginals/internal/funding` returns the smallest
+  verified input set that satisfies an exact atomic minimum.
+
+Both endpoints exclude Doginals/Dunes-bearing outputs, canonical Marketplace
+assets, and active reservations. Every returned output is rechecked against
+Dogecoin Core and includes enough raw evidence for the Backend APIs gateway and
+Wallet to independently recalculate the txid, output value, and locking script.
+Wallet summaries report Core and indexed heights/hashes plus
+`candidateUtxoCount` and `truncated`; a truncated balance is partial and must be
+labelled as such.
+
