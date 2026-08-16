@@ -58,6 +58,9 @@ checkpoint only when the pinned TAP reader, Dogecoin Core 1.14.9, and the
 official Ord-Dogecoin index agree. Every published asset includes its current
 unspent output, value, locking script, raw previous transaction, owner,
 inscription satpoint, TAP amount, and deterministic authority identity.
+The reader's cumulative transferable balance must cover each individual
+transfer inscription amount; a larger cumulative balance is valid, while an
+underflow fails the authority build.
 
 The checkpoint is replaced atomically and served only after the same strict
 schema used by marketplace ingestion accepts it. A chain-tip change, spent
