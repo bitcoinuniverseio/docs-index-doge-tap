@@ -41,6 +41,13 @@ offered to users only after its canonical authority, fee policy, Core RPC path,
 and end-to-end canaries all pass. Until then, marketplace readiness returns an
 explicit unavailable result; explorer and journal APIs continue operating.
 
+On a same-host deployment, the authority can read Dogecoin Core authentication
+from the node's private configuration file instead of duplicating it in the
+service environment. This mode works only over a loopback RPC URL and reloads
+the node's current credentials for every request while rejecting links,
+oversized files, duplicate credential fields, and files that change during a
+read.
+
 Signing remains in the user's wallet. The indexer does not hold wallet keys and
 does not silently sign or broadcast transactions.
 
@@ -106,4 +113,3 @@ confirmed-cardinal wallet summaries and funding plans, excludes protocol assets
 and reservations, and binds every response to live Dogecoin Core and the exact
 Ord-Dogecoin indexed checkpoint. Backend APIs independently revalidates those
 proofs before exposing the bounded public Wallet contract.
-
