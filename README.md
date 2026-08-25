@@ -143,3 +143,31 @@ crossed, so the decision to raise it can be made alongside the storage and
 refresh budget it implies. Inventory is paged with progress reporting, and a
 chain tip that advances mid-build retires only that attempt: the last complete
 published snapshot stays readable throughout.
+
+## Doginals inventory at production scale
+
+Inventory is read as a stream rather than collected in memory, so the size of
+the Dogecoin inscription corpus does not determine what the service needs to
+run. Memory stays bounded by the page size and by the marketplace inventory
+actually published, and progress is reported per page so a long pass is
+visibly advancing rather than silently stalled.
+
+A published inventory snapshot is marketplace custody evidence, not a copy of
+the whole corpus. Its size limit is therefore an operational decision, and
+when a corpus exceeds it the service reports the observed size and the limit
+it crossed instead of failing anonymously. The chain tip is verified before a
+pass begins, so a mismatch is reported immediately rather than after a full
+scan, and the last complete published snapshot stays readable throughout.
+
+## The service proves what it is connected to
+
+Before serving, the indexer confirms that its configured Dogecoin inscription
+index really is a Dogecoin index and reports which protocol data that index
+can answer. A misconfigured connection to another chain's index, or to an
+index built without Dogecoin token support, is refused at startup with a
+message naming what was found.
+
+This matters because an index that was never built with token support answers
+token queries with an empty result, which is indistinguishable from a chain
+that genuinely has no tokens. The service reports the difference rather than
+presenting missing data as an empty market.
