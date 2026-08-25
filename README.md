@@ -116,3 +116,30 @@ confirmed-cardinal wallet summaries and funding plans, excludes protocol assets
 and reservations, and binds every response to live Dogecoin Core and the exact
 Ord-Dogecoin indexed checkpoint. Backend APIs independently revalidates those
 proofs before exposing the bounded public Wallet contract.
+
+## Dogecoin marketplace availability
+
+Browsing and trading are reported as separate facts, because they answer
+different questions and can be true independently.
+
+A Doginals or DRC-20 browse surface is available when the indexer holds a
+fresh, complete inventory checkpoint that agrees with the Universe-operated
+Dogecoin node. Trading additionally requires the execution and broadcast
+capabilities to be enabled. Turning trading off never takes browsing offline,
+and a capability that is switched off is never presented as available.
+
+Readiness reports `readReady` for browsing, `executionReady` and
+`broadcastReady` for trading, and a machine-readable reason whenever a surface
+is not available. An application can therefore say "the index is healthy and
+this market currently has no listings" instead of the misleading "no tokens
+found", and can tell a genuine outage apart from a genuinely empty result.
+
+## Doginals corpus size
+
+The size of a single published Doginals inventory snapshot is a deliberate
+operational limit rather than a fixed product ceiling. When a corpus exceeds
+the configured limit the indexer reports the observed size and the limit it
+crossed, so the decision to raise it can be made alongside the storage and
+refresh budget it implies. Inventory is paged with progress reporting, and a
+chain tip that advances mid-build retires only that attempt: the last complete
+published snapshot stays readable throughout.
