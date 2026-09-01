@@ -4,7 +4,7 @@
   "name": "Dogecoin TAP indexer documentation",
   "classification": "archive",
   "repository": "bitcoinuniverseio/docs-index-doge-tap",
-  "documentationUrl": "https://docs.bitcoinuniverse.io/archive/docs-index-doge-tap/",
+  "documentationUrl": "https://docs.bitcoinuniverse.io/protocols/tap_doge/",
   "docsRoot": ".",
   "sourceRef": "main",
   "lifecycle": "archived",
