@@ -1,5 +1,14 @@
 # Dogecoin TAP Indexer
 
+> **Archived on 25 August 2026.** This repository is frozen and receives no
+> changes, fixes, or support. It documents the Dogecoin TAP indexer as it stood
+> at its final commit, and is kept for reference and so its URLs keep resolving.
+>
+> **Where to go now:** the [TAP protocol](https://docs.bitcoinuniverse.io/protocols/tap/)
+> on the documentation portal, which covers Dogecoin TAP coverage as it is
+> documented today. Treat availability statements below as historical: they
+> describe the service at archive time, not the service today.
+
 The Dogecoin TAP Indexer gives Universe applications a stable, normalized view
 of TAP token activity. It reads the canonical Dogecoin mainnet TAP source,
 preserves source evidence, and publishes deterministic assets, events, holder
