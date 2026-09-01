@@ -1,182 +1,146 @@
-# Dogecoin TAP Indexer
+# Dogecoin TAP indexer documentation (archived)
 
-> **Archived on 25 August 2026.** This repository is frozen and receives no
-> changes, fixes, or support. It documents the Dogecoin TAP indexer as it stood
-> at its final commit, and is kept for reference and so its URLs keep resolving.
+> ## ARCHIVED. FROZEN. NOT MAINTAINED.
 >
-> **Where to go now:** the [TAP protocol](https://docs.bitcoinuniverse.io/protocols/tap/)
-> on the documentation portal, which covers Dogecoin TAP coverage as it is
-> documented today. Treat availability statements below as historical: they
-> describe the service at archive time, not the service today.
+> **Archived:** 25 August 2026
+> **Final version:** none. This repository was continuously published and never carried a release tag. The documentation is frozen at its final source commit.
+> **Final source commit:** [`c032045`](https://github.com/bitcoinuniverseio/docs-index-doge-tap/commit/c0320450eea63d7e29f3d62341b07c42a472cbcd) (25 August 2026)
+> **Replacement:** [TAP on Doge protocol documentation](https://bitcoinuniverseio.github.io/tap-on-doge/) and the portal's [TAP on Doge page](https://docs.bitcoinuniverse.io/protocols/tap_doge/)
+>
+> This repository receives no changes, no fixes, and no support. Every
+> availability, readiness, and capability statement preserved here describes the
+> service as it stood on 25 August 2026, not as it stands today.
+>
+> Read the [security and accuracy warning](#security-and-accuracy-warning) before you build against anything here.
 
-The Dogecoin TAP Indexer gives Universe applications a stable, normalized view
-of TAP token activity. It reads the canonical Dogecoin mainnet TAP source,
-preserves source evidence, and publishes deterministic assets, events, holder
-snapshots, and cursor-based journal batches.
+## What this documented
 
-## What it provides
+This repository held the public documentation for the Dogecoin TAP indexer: a
+Universe-operated service that read TAP token activity on Dogecoin mainnet and
+published it as a normalized, deterministic view for Universe applications.
 
-- TAP deployments, including canonical Unicode tickers
-- mint, transfer, and filled-trade activity
-- atomic-unit amounts without floating-point conversion
-- holder snapshots published only after a complete generation is verified
-- stable event identities and replay-safe journal cursors
-- explicit readiness and source-coverage reporting
+The documented service covered:
 
-The service never guesses missing deployment metadata. A malformed or
-unresolvable source row is retained as evidence and readiness remains closed
-until canonical data is complete.
+| Area | What it did |
+| --- | --- |
+| Explorer data | TAP deployments, mints, transfers, and filled trades, in atomic units with no floating-point conversion |
+| Journal | Cursor-based batches with stable event identities and replay-safe cursors |
+| Holder snapshots | Published only after a complete generation was verified |
+| Readiness | `/live` and `/ready` as explicit traffic gates, fail-closed during backfill or source loss |
+| Marketplace | A fail-closed Dogecoin marketplace integration for TAP on Doge, DRC-20, and Doginals |
+| Coverage reporting | Explicit `partial` coverage: confirmed activity authoritative, pending activity unavailable |
 
-## Availability model
+It was documentation for an operated service, not a protocol specification and
+not a public API. The service itself was never open source, and its source
+repository is private.
 
-`GET /live` confirms that the process is running. `GET /ready` confirms that the
-pinned reader is connected, the initial scan and holder queue are complete,
-there are no quarantined canonical rows, and the latest successful sync is
-fresh.
+## Where this documentation went
 
-Applications should route traffic only when `/ready` returns HTTP 200. During a
-first deployment or source recovery it returns HTTP 503 while durable
-checkpoints continue advancing.
+Nothing was deleted. The subject matter split into three places that are
+maintained, and each of them is more accurate today than anything in this
+repository:
 
-## Marketplace readiness
+| If you came here for | Go to |
+| --- | --- |
+| The TAP on Dogecoin protocol: specification, guide, indexer semantics, test vectors, payload validator | [bitcoinuniverseio.github.io/tap-on-doge](https://bitcoinuniverseio.github.io/tap-on-doge/) |
+| How Universe supports TAP on Doge, and its current status | [docs.bitcoinuniverse.io/protocols/tap_doge/](https://docs.bitcoinuniverse.io/protocols/tap_doge/) |
+| The Dogecoin ordinals implementation this indexer depended on (Doginals, DRC-20, Dunes) | [bitcoinuniverseio/ord-dogecoin](https://github.com/bitcoinuniverseio/ord-dogecoin) |
+| TAP on Bitcoin mainnet | [bitcoinuniverseio.github.io/tap](https://bitcoinuniverseio.github.io/tap/) |
+| Every protocol Universe documents | [Protocol Atlas](https://docs.bitcoinuniverse.io/protocols/) |
+| Machine-readable interface contracts across the estate | [Interface directory](https://docs.bitcoinuniverse.io/developers/interfaces/) |
 
-The indexer includes a fail-closed Dogecoin Marketplace integration for TAP on
-Dogecoin, DRC-20, and Doginals. It can normalize authority checkpoints, keep
-marketplace state replay-safe, prepare transaction intents, validate signed
-transactions, and submit a previously authorized transaction to Dogecoin Core.
+## Migration guidance
 
-Marketplace availability is separate from explorer readiness. A protocol is
-offered to users only after its canonical authority, fee policy, Core RPC path,
-and end-to-end canaries all pass. Until then, marketplace readiness returns an
-explicit unavailable result; explorer and journal APIs continue operating.
+**If you consumed the documented HTTP API.** You were a trusted Universe backend
+holding a Bearer token; there was never a public consumer of these routes. Get
+the current contract from the operator, not from this repository. The routes,
+readiness fields, and cursor semantics recorded here are a 2026 snapshot and are
+not guaranteed to match anything running now.
 
-On a same-host deployment, the authority can read Dogecoin Core authentication
-from the node's private configuration file instead of duplicating it in the
-service environment. This mode works only over a loopback RPC URL and reloads
-the node's current credentials for every request while rejecting links,
-oversized files, duplicate credential fields, and files that change during a
-read.
+**If you were reading this to understand TAP on Dogecoin.** Read
+[the TAP on Doge protocol documentation](https://bitcoinuniverseio.github.io/tap-on-doge/)
+instead. It is maintained, it carries test vectors and a client-side payload
+validator, and it describes the protocol rather than one operator's service.
 
-Signing remains in the user's wallet. The indexer does not hold wallet keys and
-does not silently sign or broadcast transactions.
+**If you were reading this for Doginals or DRC-20.** Those were secondary
+subjects here. [`ord-dogecoin`](https://github.com/bitcoinuniverseio/ord-dogecoin)
+is the Dogecoin ordinals indexer, HTTP API, and explorer, and it is the accurate
+source for how Doginals, DRC-20, and Dunes are indexed on Dogecoin.
 
-### Canonical TAP inventory
+**If you copied the readiness model.** The shape is still sound and it is worth
+reading: separate liveness from readiness, report browse availability separately
+from trade availability, and never render "not serving" as "empty". Those rules
+are now stated for the whole organization in the
+[lifecycle and availability vocabulary](https://docs.bitcoinuniverse.io/status/),
+which is the maintained version.
 
-The optional TAP authority builder produces a complete transferable-inventory
-checkpoint only when the pinned TAP reader, Dogecoin Core 1.14.9, and the
-official Ord-Dogecoin index agree. Every published asset includes its current
-unspent output, value, locking script, raw previous transaction, owner,
-inscription satpoint, TAP amount, and deterministic authority identity.
-The reader's cumulative transferable balance must cover each individual
-transfer inscription amount; a larger cumulative balance is valid, while an
-underflow fails the authority build.
+## Security and accuracy warning
 
-The checkpoint is replaced atomically and served only after the same strict
-schema used by marketplace ingestion accepts it. A chain-tip change, spent
-output, ambiguous inscription output, stale reader, malformed source row, or
-source disagreement aborts publication. The previous verified checkpoint is
-not silently relabelled as current.
+The preserved documents were written for an operated service. Some of what they
+say is unsafe to act on now.
 
-Long-lived immutable transaction and inscription evidence is collected before
-the checkpoint window. The final complete UTXO inventory and inscription
-custody are then revalidated in bounded batches while the Core tip, Ord tip,
-and reader witness are held stable, keeping publication both practical and
-fail-closed on Dogecoin's short block interval.
+1. **This is not a public API, and no base URL is published.** Every route beyond
+   `/live` and `/ready` required a Bearer token issued to a trusted backend. The
+   reader compatibility route additionally required TLS and an exact source-IP
+   match. Do not probe, scan, or attempt to reach a Universe-operated instance;
+   there is no public endpoint to call and no public token to use.
+2. **Do not treat the preserved contract as current.** Route paths, readiness
+   field names, cursor formats, and the marketplace protocol list are a snapshot
+   from 25 August 2026. Building a client against them without confirming the
+   live contract will produce a client that fails silently or, worse, one that
+   believes a safety gate is satisfied when it is not.
+3. **The readiness gates are safety gates, not health cosmetics.** The preserved
+   guidance says a client must keep Dogecoin transaction controls disabled while
+   marketplace readiness returns HTTP 503. If you carry that pattern into new
+   code, carry the gate with it. A client that shows trade controls over an index
+   that is not authoritative can lead a user to sign against stale state, and
+   everything on Dogecoin is real and irreversible.
+4. **`GET /marketplace/v1/openapi.json` is not publicly reachable.** It is
+   referenced in the preserved API document as the machine-readable contract of
+   an authenticated service. Published Universe interface contracts are listed in
+   the [interface directory](https://docs.bitcoinuniverse.io/developers/interfaces/).
+5. **Availability statements here are historical.** They describe what was true
+   at archive time. The authority for current availability is
+   [live status](https://docs.bitcoinuniverse.io/status/live/), never archived
+   prose.
 
-TAP, DRC-20, and Doginals each have a dedicated complete canonical inventory
-builder and independent operational gate. DRC-20 and Doginals require a fresh
-full Ord-Dogecoin index with their protocol modules enabled; the legacy plain-
-inscription archive cannot authorize them. Readiness for one protocol never
-enables another indirectly.
+No wallet seed, private key, signing secret, RPC credential, database credential,
+hostname, or IP address appears in this repository, and none was removed to make
+that true.
 
-## Release validation
+## What is preserved here
 
-Trusted release checks run on the organisation-managed build fleet. A short
-infrastructure interruption can receive one automatic retry only when no build
-or test step has failed. A real validation failure remains visible and blocks
-release promotion.
+| Path | What it is |
+| --- | --- |
+| [`API.md`](API.md) | The final public endpoint and readiness contract, unchanged below its historical banner |
+| [`archive/README-final-2026-08-25.md`](archive/README-final-2026-08-25.md) | The README as published on the final source commit, byte-identical |
 
-## Security
+Provenance, so any copy can be checked against Git history:
 
-Explorer data and status endpoints require Bearer authentication. Reader
-compatibility routes are optional, TLS-protected, and restricted to an exact IP
-allowlist. The bundled reader REST and WebSocket servers remain disabled.
+| File | Source | SHA-256 |
+| --- | --- | --- |
+| `API.md` body | `API.md` at `c032045` | `330ea616e209d153dc0689d4519cbfe27b61aa4f7201447d35cc6180ca8d132a` |
+| `archive/README-final-2026-08-25.md` | `README.md` at `c032045` | `1a5b71ec1bf15faf242960d857fdd8a72bb2c46c00df53b71936ad9f9b96977f` |
 
-No wallet seed, private key, signing secret, RPC credential, or database
-credential is stored in this documentation.
+```bash
+git show c0320450eea63d7e29f3d62341b07c42a472cbcd:README.md | sha256sum
+git show c0320450eea63d7e29f3d62341b07c42a472cbcd:API.md | sha256sum
+```
 
-## Integration
+`API.md` keeps its original path so links into it from elsewhere keep resolving.
+A historical banner was added at the top; everything below that banner is
+unchanged from `c032045`, and the API contract itself last changed on 16 August
+2026 in commit
+[`7db92da`](https://github.com/bitcoinuniverseio/docs-index-doge-tap/commit/7db92da).
 
-See [API.md](API.md) for the public endpoint contract and readiness behavior.
+## Permanent URLs
 
-## Source guarantees
-
-The current reader exposes confirmed indexed state but no Dogecoin mempool feed
-or explicit block-replacement notification stream. Coverage therefore reports
-`partial`: confirmed activity is canonical at the pinned reader version, while
-pending activity is unavailable and reorg handling is based on immutable tail
-comparison evidence.
-
-## Universe-operated Wallet data
-
-The indexer now supplies the Wallet's transaction-critical Dogecoin inputs
-without public data providers. Its private authority returns proof-bound
-confirmed-cardinal wallet summaries and funding plans, excludes protocol assets
-and reservations, and binds every response to live Dogecoin Core and the exact
-Ord-Dogecoin indexed checkpoint. Backend APIs independently revalidates those
-proofs before exposing the bounded public Wallet contract.
-
-## Dogecoin marketplace availability
-
-Browsing and trading are reported as separate facts, because they answer
-different questions and can be true independently.
-
-A Doginals or DRC-20 browse surface is available when the indexer holds a
-fresh, complete inventory checkpoint that agrees with the Universe-operated
-Dogecoin node. Trading additionally requires the execution and broadcast
-capabilities to be enabled. Turning trading off never takes browsing offline,
-and a capability that is switched off is never presented as available.
-
-Readiness reports `readReady` for browsing, `executionReady` and
-`broadcastReady` for trading, and a machine-readable reason whenever a surface
-is not available. An application can therefore say "the index is healthy and
-this market currently has no listings" instead of the misleading "no tokens
-found", and can tell a genuine outage apart from a genuinely empty result.
-
-## Doginals corpus size
-
-The size of a single published Doginals inventory snapshot is a deliberate
-operational limit rather than a fixed product ceiling. When a corpus exceeds
-the configured limit the indexer reports the observed size and the limit it
-crossed, so the decision to raise it can be made alongside the storage and
-refresh budget it implies. Inventory is paged with progress reporting, and a
-chain tip that advances mid-build retires only that attempt: the last complete
-published snapshot stays readable throughout.
-
-## Doginals inventory at production scale
-
-Inventory is read as a stream rather than collected in memory, so the size of
-the Dogecoin inscription corpus does not determine what the service needs to
-run. Memory stays bounded by the page size and by the marketplace inventory
-actually published, and progress is reported per page so a long pass is
-visibly advancing rather than silently stalled.
-
-A published inventory snapshot is marketplace custody evidence, not a copy of
-the whole corpus. Its size limit is therefore an operational decision, and
-when a corpus exceeds it the service reports the observed size and the limit
-it crossed instead of failing anonymously. The chain tip is verified before a
-pass begins, so a mismatch is reported immediately rather than after a full
-scan, and the last complete published snapshot stays readable throughout.
-
-## The service proves what it is connected to
-
-Before serving, the indexer confirms that its configured Dogecoin inscription
-index really is a Dogecoin index and reports which protocol data that index
-can answer. A misconfigured connection to another chain's index, or to an
-index built without Dogecoin token support, is refused at startup with a
-message naming what was found.
-
-This matters because an index that was never built with token support answers
-token queries with an empty result, which is indistinguishable from a chain
-that genuinely has no tokens. The service reports the difference rather than
-presenting missing data as an empty market.
+| What | URL |
+| --- | --- |
+| This repository | https://github.com/bitcoinuniverseio/docs-index-doge-tap |
+| Preserved API contract | https://github.com/bitcoinuniverseio/docs-index-doge-tap/blob/main/API.md |
+| Final source commit | https://github.com/bitcoinuniverseio/docs-index-doge-tap/commit/c0320450eea63d7e29f3d62341b07c42a472cbcd |
+| Replacement protocol documentation | https://bitcoinuniverseio.github.io/tap-on-doge/ |
+| Portal page for TAP on Doge | https://docs.bitcoinuniverse.io/protocols/tap_doge/ |
+| Dogecoin ordinals implementation | https://github.com/bitcoinuniverseio/ord-dogecoin |
+| Documentation home | https://docs.bitcoinuniverse.io |
