@@ -1,3 +1,40 @@
+<!-- ARCHIVED DOCUMENT. Everything below the horizontal rule is unchanged from commit c0320450eea63d7e29f3d62341b07c42a472cbcd. -->
+
+# Dogecoin TAP indexer API (archived, historical)
+
+> ## HISTORICAL RECORD. NOT A CURRENT CONTRACT.
+>
+> This repository was **archived on 25 August 2026**. Everything below the
+> horizontal rule is the API document exactly as it stood at the final source
+> commit [`c032045`](https://github.com/bitcoinuniverseio/docs-index-doge-tap/commit/c0320450eea63d7e29f3d62341b07c42a472cbcd),
+> SHA-256 `330ea616e209d153dc0689d4519cbfe27b61aa4f7201447d35cc6180ca8d132a`.
+> Nothing in it has been corrected, updated, or re-verified since.
+>
+> **Everything below is historical.** Route paths, readiness field names, cursor
+> formats, and the marketplace protocol list describe an operated service at one
+> moment in 2026. Do not build a client against them without confirming the live
+> contract with the operator.
+>
+> **This was never a public API.** Every route beyond `GET /live` and
+> `GET /ready` required a Bearer token issued to a trusted Universe backend, and
+> the reader compatibility route additionally required TLS and an exact
+> source-IP match. No public base URL exists, and `GET /marketplace/v1/openapi.json`
+> is not publicly reachable.
+>
+> **The readiness gates are safety gates.** If you reuse this design, keep the
+> gate: transaction controls stay disabled while marketplace readiness returns
+> HTTP 503. Dogecoin transactions are real and irreversible.
+>
+> **Current documentation:**
+> [TAP on Doge protocol](https://bitcoinuniverseio.github.io/tap-on-doge/) ·
+> [portal page](https://docs.bitcoinuniverse.io/protocols/tap_doge/) ·
+> [Dogecoin ordinals implementation](https://github.com/bitcoinuniverseio/ord-dogecoin) ·
+> [current live status](https://docs.bitcoinuniverse.io/status/live/)
+>
+> Full archive record: [README.md](README.md).
+
+---
+
 # API
 
 ## Health and readiness
